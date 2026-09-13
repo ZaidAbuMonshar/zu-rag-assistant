@@ -1,0 +1,22 @@
+# Keeps `docker build`'s context small and fast to send to the Docker daemon.
+# Even though the Dockerfile only ever COPYs requirements.txt and src/, Docker
+# tars up the *entire* folder as "build context" before applying .dockerignore
+# rules -- without this file, every build would first package up ~3.7GB of
+# .venv/ and data/ for nothing.
+.venv/
+data/
+notebooks/
+.idea/
+.git/
+.env
+
+# Stray duplicate Chroma DB under src/ingest/data/ (not the one the app
+# actually reads -- see build_chroma_db.py's CHROMA_PATH, which points at
+# project-root data/chroma_db/). Excluded so it never ends up inside the image.
+src/ingest/data/
+
+__pycache__/
+*.pyc
+
+*.docx
+*.pdf

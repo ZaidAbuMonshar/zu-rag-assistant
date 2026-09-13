@@ -1,0 +1,27 @@
+# Saves the `docker run` command from today's manual build/run so a redeploy
+# is `docker compose up -d` instead of retyping a long command with several
+# flags (and risking a typo'd volume path or a forgotten -e). Same image,
+# same volumes, same everything -- this doesn't change behavior, only how
+# it's invoked.
+services:
+  zu-rag-app:
+    build: .
+    image: zu-rag-assistant:latest
+    container_name: zu-rag-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Project data (Chroma DB + Qwen GGUF) -- see Dockerfile's comment on
+      # why this is mounted, not baked into the image.
+      - ./data:/app/data
+      # BGE-M3 weights live in the Hugging Face cache, not this project's
+      # data/ folder (see Session 9's log) -- without this mount, the
+      # container re-downloads ~2GB on every fresh start.
+      # NOTE: unlike a shell, Compose does NOT expand `~` in volume paths --
+      # ${HOME} is Compose's own variable substitution, which does work here.
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+    environment:
+      # Read from a .env file (same folder) or the shell environment --
+      # never hardcoded here. See .env.example.
+      - ZU_RAG_API_KEY=${ZU_RAG_API_KEY}

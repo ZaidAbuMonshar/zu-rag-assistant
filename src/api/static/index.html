@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مساعد مركز الحاسوب — جامعة الزرقاء</title>
+<style>
+  :root {
+    --zu-blue: #0f6fb0;
+    --zu-blue-dark: #0a4f7d;
+    --zu-blue-light: #eaf4fb;
+    --zu-blue-border: #cfe6f5;
+    --text-main: #1f2a37;
+    --text-muted: #5b6b7a;
+    --bg: #f5f9fc;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+
+  header {
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--zu-blue-dark);
+    margin: 0 0 6px;
+  }
+
+  header p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--zu-blue-border);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(15, 111, 176, 0.08);
+  }
+
+  .ask-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 84px;
+    resize: vertical;
+    padding: 12px 14px;
+    border: 1px solid var(--zu-blue-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text-main);
+    background: var(--zu-blue-light);
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--zu-blue);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  button {
+    background: var(--zu-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  button:hover:not(:disabled) {
+    background: var(--zu-blue-dark);
+  }
+
+  button:disabled {
+    background: #9fc4dc;
+    cursor: not-allowed;
+  }
+
+  .status {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--text-muted);
+    display: none;
+  }
+
+  .status.visible {
+    display: block;
+  }
+
+  .result {
+    margin-top: 24px;
+    display: none;
+  }
+
+  .result.visible {
+    display: block;
+  }
+
+  .answer-block {
+    background: var(--zu-blue-light);
+    border: 1px solid var(--zu-blue-border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 16px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+  }
+
+  .sources-title {
+    margin: 20px 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .source-item {
+    border-right: 3px solid var(--zu-blue);
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: #fbfdfe;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .source-item .doc-name {
+    color: var(--text-main);
+    font-weight: 600;
+  }
+
+  .error-block {
+    margin-top: 18px;
+    border: 1px solid #e3b3ac;
+    background: #fdf1ef;
+    color: #8a3227;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    display: none;
+  }
+
+  .error-block.visible {
+    display: block;
+  }
+
+  footer {
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>مساعد مركز الحاسوب — جامعة الزرقاء</h1>
+  <p>اطرح سؤالك حول وثائق وسياسات الجامعة، وستحصل على إجابة مستندة إلى الوثائق الرسمية.</p>
+</header>
+
+<main>
+  <div class="card">
+    <form class="ask-form" id="ask-form">
+      <textarea
+        id="query-input"
+        placeholder="مثال: ما هي رؤية جامعة الزرقاء؟"
+        required
+      ></textarea>
+      <div class="actions">
+        <button type="submit" id="submit-btn">اسأل</button>
+      </div>
+    </form>
+
+    <div class="status" id="status">جاري البحث عن إجابة، قد يستغرق ذلك بضع ثوانٍ...</div>
+    <div class="error-block" id="error-block"></div>
+
+    <div class="result" id="result">
+      <div class="answer-block" id="answer-text"></div>
+      <div class="sources-title">المصادر المعتمدة في الإجابة</div>
+      <div id="sources-list"></div>
+    </div>
+  </div>
+
+  <footer>نظام استرجاع وتوليد إجابات (RAG) — يعمل محليًا على وثائق الجامعة الرسمية فقط.</footer>
+</main>
+
+<script>
+  const form = document.getElementById("ask-form");
+  const input = document.getElementById("query-input");
+  const submitBtn = document.getElementById("submit-btn");
+  const status = document.getElementById("status");
+  const errorBlock = document.getElementById("error-block");
+  const result = document.getElementById("result");
+  const answerText = document.getElementById("answer-text");
+  const sourcesList = document.getElementById("sources-list");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const query = input.value.trim();
+    if (!query) {
+      return;
+    }
+
+    submitBtn.disabled = true;
+    status.classList.add("visible");
+    errorBlock.classList.remove("visible");
+    result.classList.remove("visible");
+
+    try {
+      const response = await fetch("/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          // Injected server-side when this page is served (see src/api/main.py's
+          // ui() handler) -- not a real client secret, just enough to satisfy
+          // the API-key check for this same-origin demo page.
+          "X-API-Key": "__ZU_RAG_API_KEY__",
+        },
+        body: JSON.stringify({ query: query, top_k: 3 }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const message = (data && data.error && data.error.message) || "حدث خطأ غير متوقع.";
+        throw new Error(message);
+      }
+
+      answerText.textContent = data.answer;
+
+      sourcesList.innerHTML = "";
+      if (data.sources && data.sources.length > 0) {
+        data.sources.forEach((source) => {
+          const item = document.createElement("div");
+          item.className = "source-item";
+          item.innerHTML =
+            '<span class="doc-name">' + source.source_doc + "</span>" +
+            " — جزء رقم " + source.chunk_index +
+            " (درجة الصلة: " + source.score + ")";
+          sourcesList.appendChild(item);
+        });
+      } else {
+        const item = document.createElement("div");
+        item.className = "source-item";
+        item.textContent = "لا توجد مصادر مرتبطة بهذه الإجابة.";
+        sourcesList.appendChild(item);
+      }
+
+      result.classList.add("visible");
+    } catch (err) {
+      errorBlock.textContent = "تعذر الحصول على إجابة: " + err.message;
+      errorBlock.classList.add("visible");
+    } finally {
+      status.classList.remove("visible");
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>

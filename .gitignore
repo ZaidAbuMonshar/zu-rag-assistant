@@ -1,0 +1,26 @@
+# Secrets — never commit
+.env
+API.txt
+
+# Local data & models (multi-GB; bind-mounted into Docker instead)
+data/
+
+# Python virtual environment
+.venv/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# IDE / editor
+.idea/
+
+# Claude Code local settings
+.claude/
+
+# Docs kept local-only
+*.docx
+*.md
+
+# Scratch/diagnostic output
+diag_retrieve.txt
