@@ -43,34 +43,3 @@ no paid API, no data leaving the machine it runs on.
 Python · FastAPI · ChromaDB · BGE-M3 · `llama-cpp-python` + Qwen2.5-3B-Instruct (GGUF)
 · LangChain (core) · Docker / Docker Compose
 
-## Results
-
-- **Recall@3: 100% (17/17)** on a hand-built Arabic eval set, achieved through targeted
-  query-expansion fixes rather than a larger/heavier retrieval model.
-- Hybrid (BM25 + dense) retrieval independently matches that same 100% recall.
-- Fully grounded generation: verified to correctly decline out-of-corpus questions
-  rather than hallucinate an answer.
-- Runs end-to-end on commodity CPU hardware — no GPU required.
-
-## Running it locally
-
-Requires Docker and Docker Compose.
-
-```bash
-git clone https://github.com/ZaidAbuMonshar/zu-rag-assistant.git
-cd zu-rag-assistant
-cp .env.example .env   # set ZU_RAG_API_KEY, or leave unset to auto-generate one
-docker compose up -d --build
-```
-
-The API will be available at `http://localhost:8000` (`/search`, `/ask`), with a
-bundled web UI served at `/`.
-
-Note: this repo does not include the source documents, the vector database, or model
-weights (`data/` is intentionally excluded) — you'll need your own document corpus and
-a build/ingestion pass to populate a working `data/` directory before this runs
-end-to-end.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
